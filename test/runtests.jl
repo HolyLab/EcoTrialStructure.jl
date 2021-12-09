@@ -67,4 +67,44 @@ using Documenter
         @test_broken eval(Meta.parse("EventTiming(trial_start=0.0f0 ms, offer_on=100.0f0 ms, offer_off=400.0f0 ms, go=450.0f0 ms, choice=837.0f0 ms, trial_end=1200.0f0 ms)")) == et
         @test et.trial_end == 1200ms
     end
+
+    @testset "Matlab import" begin
+        # Check the "reverse-encoding" of the TrialType
+        @test  EcoTrialStructure.mat_trialtype(1, 1, 1, 1).choseA
+        @test !EcoTrialStructure.mat_trialtype(1, 1, 2, 1).choseA
+        tt = EcoTrialStructure.mat_trialtype(0, 1, 0, 1)
+        @test tt.choseA
+        @test iswrong(tt)
+        @test madechoice(tt)
+        tt = EcoTrialStructure.mat_trialtype(1, 0, 0, 1)
+        @test !tt.choseA
+        @test iswrong(tt)
+        @test madechoice(tt)
+        @test_throws Exception EcoTrialStructure.mat_trialtype(1, 1, 0, 1)
+        @test_throws Exception EcoTrialStructure.mat_trialtype(0, 0, 0, 1)
+        tt = EcoTrialStructure.mat_trialtype(1, 1, 0, 0)
+        @test !madechoice(tt)
+
+        testfile = joinpath(@__DIR__, "data", "testfile.mat")  # snippet from data collected by Manning Zhang, Washington University in St. Louis
+        cts, tts, ets = parsemat(testfile)
+        tt3, tt201 = tts[3], tts[201]
+        @test isforced(tt3)
+        @test iswrong(tt3)
+        @test tt3.nB == 2
+        @test isforced(tt201)
+        @test !iswrong(tt201)
+        @test tt201.nA == 2
+        @test sprint(show, cts[3])   == "63 cells with 69 timepoints"
+        @test sprint(show, cts[201]) == "63 cells with 39 timepoints"
+        @test length(ets) == 2
+        et3 = ets[3]
+        @test et3.trial_start == 0s
+        @test et3.offer_on  == 2003ms
+        @test et3.offer_off == et3.go == 4820ms
+        @test et3.choice == 5111ms
+        @test et3.trial_end == 11066ms
+
+        cts, tts, ets, poscells = parsemat(positive_cells, testfile)
+        @test sum(poscells) == 5 && length(poscells) == 63
+    end
 end
