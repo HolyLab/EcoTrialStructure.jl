@@ -3,11 +3,18 @@ uuid = "b7cf6b7b-0a0b-40d6-9eb4-feefddb16adc"
 authors = ["Tim Holy <tim.holy@gmail.com> and contributors"]
 version = "0.1.0"
 
+[deps]
+IntervalSets = "8197267c-284f-5f27-9208-e0e47529a953"
+Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
+
 [compat]
+IntervalSets = "0.5"
+Unitful = "1"
 julia = "1"
 
 [extras]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test"]
+test = ["Documenter", "Test"]
