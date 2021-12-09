@@ -27,7 +27,7 @@ Parse the trial data in `filename`. Optionally pass a `readfunction` to extract 
 ```julia
 function readfunction(data, args...)
     moredata = data["matlab_variable_name"]
-    # maybe do some processing
+    # maybe do some processing/validation
     return args..., moredata
 end
 ```

@@ -4,7 +4,7 @@ const Tms = typeof(1.0f0*ms)
     CellsTrial(t, dFoF)
 
 Store cellular responses for a single trial. `t` is the list of frame times (in units of time, see Unitful.jl) and
-`dFoF`` is a matrix with one row for each time in `t`, and one column per cell.
+`dFoF` is a matrix with one row for each time in `t`, and one column per cell.
 
 # Examples
 
@@ -37,7 +37,7 @@ This extracted the `dFoF` values recorded between 200ms and 300ms, inclusive.
 In other cases, you might want a specific number of frames, starting at a particular time:
 
 ```jldoctest demo
-julia> tframes, df = ct[FrameSeq(175ms, 3), :];  # start nearest to 175ms, but grab 3 frames' worth
+julia> tframes, df = ct[FrameSeq(175ms, 3), :];  # start nearest to 175ms, and grab 3 frames' worth
 
 julia> tframes
 200.0f0 ms..400.0f0 ms
