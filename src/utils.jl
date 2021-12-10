@@ -6,6 +6,14 @@ function idxof(list, x)
 end
 
 """
+    isdeferred(fs::FrameSeq)
+
+Return `true` if the start time in `fs` is a field name of `EventTiming`, and hence
+requires concrete instantiation as `fs(et)` for a specific trial.
+"""
+isdeferred(fs::FrameSeq) = isa(fs.start, Symbol)
+
+"""
     madechoice(tr::TrialResult)
 
 Returns `true` if the animal made a choice in the trial.

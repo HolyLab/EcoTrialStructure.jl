@@ -23,7 +23,7 @@ using OrderedCollections
 using MAT
 
 export CellsTrial, FrameSeq, TrialType, TrialResult, EventTiming
-export isforced, iswrong, madechoice, .., ms, s
+export isdeferred, isforced, iswrong, madechoice, .., ms, s
 export parsemat, positive_cells
 
 include("types.jl")

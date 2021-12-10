@@ -81,16 +81,34 @@ end
 
 """
     FrameSeq(tstart, nframes)
+    FrameSeq(eventfield::Symbol, nframes)
 
 A sequence of `nframes` frames starting at the nearest timepoint to `tstart`.
 See [`CellsTrial`](@ref) for an example using this in indexing.
+
+Alternatively, this can be constructed specifying a particular fieldname of [`EventTiming`](@ref),
+in which case the concrete timing can be deferred until a later time based on a specific
+trial:
+
+```jldoctest; setup=:(using EcoTrialStructure)
+julia> fs = FrameSeq(:go, 5)
+FrameSeq(:go, 5)
+
+julia> et = EventTiming(0ms, 100ms, 400ms, 450ms, 837ms, 1.2s)
+EventTiming(trial_start=0.0f0 ms, offer_on=100.0f0 ms, offer_off=400.0f0 ms, go=450.0f0 ms, choice=837.0f0 ms, trial_end=1200.0f0 ms)
+
+julia> fs(et)
+FrameSeq(450.0f0 ms, 5)
+```
 """
 struct FrameSeq
-    start::Tms
+    start::Union{Tms,Symbol}
     len::Int
 end
+FrameSeq(start::Unitful.Quantity, len::Integer) = FrameSeq(Tms(start), len)
 
 function Base.getindex(ct::CellsTrial, ti::FrameSeq, ci)
+    isdeferred(ti) && throw(ArgumentError("indexing requires a concrete `FrameSeq`, use `fs(et::EventTiming)`"))
     ibegin = idxof(ct.t, ti.start)
     iend = ibegin + ti.len - 1
     return ct.t[ibegin] .. ct.t[iend], ct.dFoF[ibegin:iend, ci]
@@ -166,3 +184,8 @@ EventTiming(; trial_start, offer_on, offer_off, go, choice, trial_end) =
     EventTiming(trial_start, offer_on, offer_off, go, choice, trial_end)
 
 Base.show(io::IO, et::EventTiming) = print(io, "EventTiming(trial_start=", et.trial_start, ", offer_on=", et.offer_on, ", offer_off=", et.offer_off, ", go=", et.go, ", choice=", et.choice, ", trial_end=", et.trial_end, ")")
+
+function (fs::FrameSeq)(et::EventTiming)
+    start = fs.start
+    return isa(start, Symbol) ? FrameSeq(getfield(et, fs.start), fs.len) : fs
+end
