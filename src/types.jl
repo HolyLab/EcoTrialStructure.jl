@@ -98,23 +98,48 @@ end
 
 
 """
-    TrialType(nA, nB, leftA::Bool, choseA::Union{Bool,Missing})
+    TrialType(nA, nB, leftA::Bool)
 
 Encode the offers (`nA` and `nB` are the number of drops of A and B, respectively),
-whether A was on the left, and whether the animal chose A, B, or failed to make a choice
-(`choseA = true | false | missing`, respectively).
+and whether A was on the left.
 """
 struct TrialType
     nA::Int8
     nB::Int8
     leftA::Bool
-    choseA::Union{Bool,Missing}   # missing if the animal didn't lick
 end
 
 # This constructor makes it possible to copy/paste the output of the `show` method below
-TrialType(; nA, nB, leftA, choseA) = TrialType(nA, nB, leftA, choseA)
+TrialType(; nA, nB, leftA) = TrialType(nA, nB, leftA)
 
-Base.show(io::IO, tt::TrialType) = print(io, "TrialType(nA=", tt.nA, ", nB=", tt.nB, ", leftA=", tt.leftA, ", choseA=", tt.choseA, ")")
+Base.show(io::IO, tt::TrialType) = print(io, "TrialType(nA=", tt.nA, ", nB=", tt.nB, ", leftA=", tt.leftA, ")")
+
+
+"""
+    TrialResult(nA, nB, leftA::Bool, choseA::Union{Bool,Missing})
+    TrialResult(tt::TrialType, choseA::Union{Bool,Missing})
+
+Encode the offer configuration (see [`TrialType`](@ref)), and whether the animal chose A, B, or failed to make a choice
+(`choseA = true | false | missing`, respectively).
+"""
+struct TrialResult
+    tt::TrialType
+    choseA::Union{Bool,Missing}   # missing if the animal didn't lick
+end
+TrialResult(nA, nB, leftA, choseA) = TrialResult(TrialType(nA, nB, leftA), choseA)
+TrialResult(; nA, nB, leftA, choseA) = TrialResult(nA, nB, leftA, choseA)
+
+function Base.getproperty(tr::TrialResult, name::Symbol)
+    name === :nA && return getfield(tr, :tt).nA
+    name === :nB && return getfield(tr, :tt).nB
+    name === :leftA && return getfield(tr, :tt).leftA
+    name === :tt && return getfield(tr, :tt)
+    return getfield(tr, name)
+end
+
+Base.show(io::IO, tr::TrialResult) = print(io, "TrialResult(nA=", tr.nA, ", nB=", tr.nB, ", leftA=", tr.leftA, ", choseA=", tr.choseA, ")")
+
+TrialType(tr::TrialResult) = tr.tt
 
 
 """

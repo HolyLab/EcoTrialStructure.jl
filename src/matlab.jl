@@ -3,10 +3,10 @@
 #                                 = [2,1]   # animal chose B
 #                                 = [0,1]   # animal made wrong choice during forced choice trial
 #                                 = [0,0]   # animal made no licking responses
-function mat_trialtype(nA, nB, choice, licked)
+function mat_trialresult(nA, nB, choice, licked)
     leftA = nA < 0 || nB > 0
     nA, nB = abs(nA), abs(nB)
-    licked == 0 && return TrialType(nA, nB, leftA, missing)
+    licked == 0 && return TrialResult(nA, nB, leftA, missing)
     if choice == 0
         nA == 0 && nB == 0 && error("double-forced unexpected")
         nA == 0 || nB == 0 || error("expected this to be a forced-choice")
@@ -14,7 +14,7 @@ function mat_trialtype(nA, nB, choice, licked)
     else
         choiceA = choice == 1
     end
-    return TrialType(nA, nB, leftA, choiceA)
+    return TrialResult(nA, nB, leftA, choiceA)
 end
 
 """
@@ -60,9 +60,9 @@ function parsemat(f, filename::AbstractString)
     end
 
     # parse goodtrials (here we assume all trials are listed)
-    tts = Dict{Int,TrialType}()
+    tts = Dict{Int,TrialResult}()
     for r in eachrow(goodtrials)
-        tts[Int(r[1])] = mat_trialtype(r[2:end]...)
+        tts[Int(r[1])] = mat_trialresult(r[2:end]...)
     end
 
     # parse psyphydata
