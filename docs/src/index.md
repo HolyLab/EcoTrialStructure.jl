@@ -15,14 +15,14 @@ This package's `test/data` folder contains a test file that serves as a useful d
 ```jldoctest matdemo
 julia> using EcoTrialStructure
 
-julia> cts, tts, ets = parsemat(joinpath(pkgdir(EcoTrialStructure), "test", "data", "testfile.mat"));
+julia> cts, trs, ets = parsemat(joinpath(pkgdir(EcoTrialStructure), "test", "data", "testfile.mat"));
 
 julia> cts
 OrderedCollections.OrderedDict{Int64, CellsTrial{Float64}} with 2 entries:
   3   => 63 cells with 69 timepoints
   201 => 63 cells with 39 timepoints
 
-julia> tts
+julia> trs
 OrderedCollections.OrderedDict{Int64, TrialResult} with 2 entries:
   3   => TrialResult(nA=0, nB=2, leftA=true, choseA=true)
   201 => TrialResult(nA=2, nB=0, leftA=false, choseA=true)
@@ -34,7 +34,7 @@ OrderedCollections.OrderedDict{Int64, EventTiming} with 2 entries:
 ```
 
 This test data file was extracted from a much larger & more complete experiment with 237 trials, of which just 2 were used for testing purposes.
-`cts` has information about the cells (see [`CellsTrial`](@ref)), `tts` about the offers and behavioral decisions (see [`TrialResult`](@ref)), and `ets` about the timing of events during each trial (see [`EventTiming`](@ref)).
+`cts` has information about the cells (see [`CellsTrial`](@ref)), `trs` about the offers and behavioral decisions (see [`TrialResult`](@ref)), and `ets` about the timing of events during each trial (see [`EventTiming`](@ref)).
 Each is indexed with the trial index, i.e., `ets[3]` extracts the event timing for trial 3.
 
 You can extract additional information from the .mat file; an example is given by [`positive_cells`](@ref).
@@ -44,7 +44,7 @@ You can extract additional information from the .mat file; an example is given b
 Extracting data can be done by standard Julia methods, for example:
 
 ```jldoctest matdemo
-julia> tts[3].nB
+julia> trs[3].nB
 2
 ```
 

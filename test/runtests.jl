@@ -91,8 +91,8 @@ using Documenter
         @test !madechoice(tr)
 
         testfile = joinpath(@__DIR__, "data", "testfile.mat")  # snippet from data collected by Manning Zhang, Washington University in St. Louis
-        cts, tts, ets = parsemat(testfile)
-        tt3, tt201 = tts[3], tts[201]
+        cts, trs, ets = parsemat(testfile)
+        tt3, tt201 = trs[3], trs[201]
         @test isforced(tt3)
         @test iswrong(tt3)
         @test tt3.nB == 2
@@ -109,7 +109,7 @@ using Documenter
         @test et3.choice == 5111ms
         @test et3.trial_end == 11066ms
 
-        cts, tts, ets, poscells = parsemat(positive_cells, testfile)
+        cts, trs, ets, poscells = parsemat(positive_cells, testfile)
         @test sum(poscells) == 5 && length(poscells) == 63
     end
 end
