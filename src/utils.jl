@@ -24,6 +24,6 @@ isforced(tr::TrialResult) = isforced(tr.tt)
 """
     iswrong(tr::TrialResult)
 
-Returns `true` if `tt` is a forced-choice trial and the animal chose the wrong option.
+Returns `true` if `tr` is a forced-choice trial and the animal chose the wrong option.
 """
 iswrong(tr::TrialResult) = isforced(tr) && ((iszero(tr.nA) & (tr.choseA===true)) | (iszero(tr.nB) & (tr.choseA===false)))
