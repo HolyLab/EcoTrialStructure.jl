@@ -37,6 +37,7 @@ using Documenter
         @test_throws BoundsError ct[FrameSeq( 80ms, 2),:]   # times must be within the span
         @test_throws BoundsError ct[FrameSeq(470ms, 2),:]
         @test ct[FrameSeq(490ms, 1),:] == (500ms..500ms, dFoF[end:end,:])
+        @test_throws ArgumentError("indexing requires a concrete `FrameSeq`, use `fs(et::EventTiming)`") ct[FrameSeq(:go, 4), :]
     end
 
     @testset "TrialType & TrialResult" begin
@@ -71,6 +72,12 @@ using Documenter
         # Unitful doesn't yet support round-trip printing, see https://github.com/PainterQubits/Unitful.jl/pull/470
         @test_broken eval(Meta.parse("EventTiming(trial_start=0.0f0 ms, offer_on=100.0f0 ms, offer_off=400.0f0 ms, go=450.0f0 ms, choice=837.0f0 ms, trial_end=1200.0f0 ms)")) == et
         @test et.trial_end == 1200ms
+
+        fs = FrameSeq(:go, 5)
+        @test isdeferred(fs)
+        fse = fs(et)
+        @test fse.start == et.go
+        @test fse(EventTiming(0s, 0s, 0s, 0s, 0s, 0s)) == fse   # if the timing is concrete, this doesn't change it
     end
 
     @testset "Matlab import" begin
