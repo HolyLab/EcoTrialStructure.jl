@@ -5,10 +5,11 @@ You can learn more about each of the following from its own docstring, e.g., `?C
 
 - `CellsTrial`: Store cellular responses for a single trial.
 - `EventTiming`: Specify the timing of events during a trial.
-- `FrameSeq`: A sequence of `nframes` frames starting at the nearest timepoint to `tstart`.
-- `TrialType`: Encode the offers (`nA` and `nB` are the number of drops of A and B, respectively), whether A was on the left, and whether the animal chose A, B, or failed to make a choice (`choseA = true | false | missing`, respectively).
-- `isforced`: Returns `true` for a forced-choice trial, where either `nA` or `nB` is zero.
-- `iswrong`: Returns `true` if `tt` is a forced-choice trial and the animal chose the wrong option.
+- `FrameSeq`: A sequence of `nframes` frames starting nearest to a specified time.
+- `TrialType`: Encode the offer quantities and side (left/right).
+- `TrialResult`: Encode the `TrialType` and the animal's choice.
+- `isforced`: Returns `true` for a forced-choice trial.
+- `iswrong`: Returns `true` if the animal chose incorrectly on a forced-choice trial.
 - `madechoice`: Returns `true` if the animal made a choice in the trial.
 - `parsemat`: Parse the trial data in `filename`.
 - `positive_cells`: Extract the vector of `idx_positive_cells` from the .mat file.
@@ -20,7 +21,7 @@ using Unitful: ms, s
 using IntervalSets
 using MAT
 
-export CellsTrial, FrameSeq, TrialType, EventTiming
+export CellsTrial, FrameSeq, TrialType, TrialResult, EventTiming
 export isforced, iswrong, madechoice, .., ms, s
 export parsemat, positive_cells
 

@@ -39,24 +39,24 @@ using Documenter
         @test ct[FrameSeq(490ms, 1),:] == (500ms..500ms, dFoF[end:end,:])
     end
 
-    @testset "TrialType" begin
-        tt = TrialType(3, 1, false, true)
-        @test sprint(show, tt) == "TrialType(nA=3, nB=1, leftA=false, choseA=true)"
-        @test eval(Meta.parse("TrialType(nA=3, nB=1, leftA=false, choseA=true)")) == tt
-        @test tt == TrialType(choseA=true, nB=1, nA=3, leftA=false)
-        @test tt != TrialType(3, 1, false, false)
-        @test tt != TrialType(3, 1, false, missing)
-        @test TrialType(3, 1, false, missing) == TrialType(3, 1, false, missing)
-        @test !isforced(tt)
-        @test  madechoice(tt)
-        @test !madechoice(TrialType(3, 1, false, missing))
-        ttf = TrialType(3, 0, false, true)
+    @testset "TrialResult" begin
+        tr = TrialResult(3, 1, false, true)
+        @test sprint(show, tr) == "TrialResult(nA=3, nB=1, leftA=false, choseA=true)"
+        @test eval(Meta.parse("TrialResult(nA=3, nB=1, leftA=false, choseA=true)")) == tr
+        @test tr == TrialResult(choseA=true, nB=1, nA=3, leftA=false)
+        @test tr != TrialResult(3, 1, false, false)
+        @test tr != TrialResult(3, 1, false, missing)
+        @test TrialResult(3, 1, false, missing) == TrialResult(3, 1, false, missing)
+        @test !isforced(tr)
+        @test  madechoice(tr)
+        @test !madechoice(TrialResult(3, 1, false, missing))
+        ttf = TrialResult(3, 0, false, true)
         @test  isforced(ttf)
         @test !iswrong(ttf)
-        ttf = TrialType(3, 0, false, false)
+        ttf = TrialResult(3, 0, false, false)
         @test  isforced(ttf)
         @test  iswrong(ttf)
-        @test !isforced(TrialType(0, 0, false, true))
+        @test !isforced(TrialResult(0, 0, false, true))
     end
 
     @testset "EventTiming" begin
@@ -69,21 +69,21 @@ using Documenter
     end
 
     @testset "Matlab import" begin
-        # Check the "reverse-encoding" of the TrialType
-        @test  EcoTrialStructure.mat_trialtype(1, 1, 1, 1).choseA
-        @test !EcoTrialStructure.mat_trialtype(1, 1, 2, 1).choseA
-        tt = EcoTrialStructure.mat_trialtype(0, 1, 0, 1)
-        @test tt.choseA
-        @test iswrong(tt)
-        @test madechoice(tt)
-        tt = EcoTrialStructure.mat_trialtype(1, 0, 0, 1)
-        @test !tt.choseA
-        @test iswrong(tt)
-        @test madechoice(tt)
-        @test_throws Exception EcoTrialStructure.mat_trialtype(1, 1, 0, 1)
-        @test_throws Exception EcoTrialStructure.mat_trialtype(0, 0, 0, 1)
-        tt = EcoTrialStructure.mat_trialtype(1, 1, 0, 0)
-        @test !madechoice(tt)
+        # Check the "reverse-encoding" of the TrialResult
+        @test  EcoTrialStructure.mat_trialresult(1, 1, 1, 1).choseA
+        @test !EcoTrialStructure.mat_trialresult(1, 1, 2, 1).choseA
+        tr = EcoTrialStructure.mat_trialresult(0, 1, 0, 1)
+        @test tr.choseA
+        @test iswrong(tr)
+        @test madechoice(tr)
+        tr = EcoTrialStructure.mat_trialresult(1, 0, 0, 1)
+        @test !tr.choseA
+        @test iswrong(tr)
+        @test madechoice(tr)
+        @test_throws Exception EcoTrialStructure.mat_trialresult(1, 1, 0, 1)
+        @test_throws Exception EcoTrialStructure.mat_trialresult(0, 0, 0, 1)
+        tr = EcoTrialStructure.mat_trialresult(1, 1, 0, 0)
+        @test !madechoice(tr)
 
         testfile = joinpath(@__DIR__, "data", "testfile.mat")  # snippet from data collected by Manning Zhang, Washington University in St. Louis
         cts, tts, ets = parsemat(testfile)
