@@ -45,6 +45,7 @@ using Documenter
         @test eval(Meta.parse("TrialType(nA=3, nB=1, leftA=false)")) == tt
 
         tr = TrialResult(3, 1, false, true)
+        @test TrialType(tr) == tt
         @test sprint(show, tr) == "TrialResult(nA=3, nB=1, leftA=false, choseA=true)"
         @test eval(Meta.parse("TrialResult(nA=3, nB=1, leftA=false, choseA=true)")) == tr
         @test tr == TrialResult(choseA=true, nB=1, nA=3, leftA=false)
