@@ -120,6 +120,9 @@ end
 
 Encode the offers (`nA` and `nB` are the number of drops of A and B, respectively),
 and whether A was on the left.
+
+If you have a list of `TrialType`s, you can `sort` them. High-A trials will come before high-B trials,
+and left before right.
 """
 struct TrialType
     nA::Int8
