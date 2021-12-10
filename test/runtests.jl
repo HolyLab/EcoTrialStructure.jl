@@ -63,6 +63,31 @@ using Documenter
         @test  isforced(ttf)
         @test  iswrong(ttf)
         @test !isforced(TrialResult(0, 0, false, true))
+
+        # Ordering: useful for printing results along a 1d axis
+        @test !(TrialType(5, 0, false) < TrialType(5, 0, false))
+        @test !(TrialType(5, 0, false) > TrialType(5, 0, false))
+        @test   TrialType(5, 0, false) < TrialType(4, 0, false)
+        @test !(TrialType(5, 0, false) > TrialType(4, 0, false))
+        @test   TrialType(5, 0, false) < TrialType(5, 2, false)
+        @test   TrialType(5, 1, false) > TrialType(5, 0, false)
+
+        @test   TrialType(5, 1, false) < TrialType(5, 2, false)
+        @test !(TrialType(5, 1, false) > TrialType(5, 2, false))
+        @test !(TrialType(5, 1, false) < TrialType(5, 1, false))
+        @test !(TrialType(5, 1, false) > TrialType(5, 1, false))
+
+        @test !(TrialType(0, 5, false) < TrialType(0, 5, false))
+        @test !(TrialType(0, 5, false) > TrialType(0, 5, false))
+        @test   TrialType(0, 5, false) > TrialType(0, 4, false)
+        @test !(TrialType(0, 5, false) < TrialType(0, 4, false))
+        @test   TrialType(0, 5, false) > TrialType(2, 5, false)
+        @test   TrialType(1, 5, false) < TrialType(0, 5, false)
+
+        @test !(TrialType(1, 5, false) < TrialType(1, 5, true))
+        @test   TrialType(1, 5, true)  < TrialType(1, 5, false)
+        @test   TrialType(2, 5, false) < TrialType(1, 5, true)
+        @test   TrialType(2, 5, true)  < TrialType(1, 5, false)
     end
 
     @testset "EventTiming" begin

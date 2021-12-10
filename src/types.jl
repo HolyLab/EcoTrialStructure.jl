@@ -120,6 +120,9 @@ end
 
 Encode the offers (`nA` and `nB` are the number of drops of A and B, respectively),
 and whether A was on the left.
+
+If you have a list of `TrialType`s, you can `sort` them. High-A trials will come before high-B trials,
+and left before right.
 """
 struct TrialType
     nA::Int8
@@ -132,6 +135,19 @@ TrialType(; nA, nB, leftA) = TrialType(nA, nB, leftA)
 
 Base.show(io::IO, tt::TrialType) = print(io, "TrialType(nA=", tt.nA, ", nB=", tt.nB, ", leftA=", tt.leftA, ")")
 
+function Base.isless(a::TrialType, b::TrialType)
+    ratio(tt::TrialType) = tt.nB/tt.nA
+
+    # Ordering puts high-A trials before high-B trials
+    rA, rB = ratio(a), ratio(b)
+    isless(rA, rB) && return true
+    isless(rB, rA) && return false
+    a.nA > b.nA && return true
+    a.nA < b.nA && return false
+    a.nB > b.nB && return false
+    a.nB < b.nB && return true
+    return a.leftA > b.leftA   # if all else are equal, put left before right
+end
 
 """
     TrialResult(nA, nB, leftA::Bool, choseA::Union{Bool,Missing})
