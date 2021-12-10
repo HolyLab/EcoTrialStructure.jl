@@ -19,6 +19,7 @@ module EcoTrialStructure
 using Unitful
 using Unitful: ms, s
 using IntervalSets
+using OrderedCollections
 using MAT
 
 export CellsTrial, FrameSeq, TrialType, TrialResult, EventTiming

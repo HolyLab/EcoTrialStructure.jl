@@ -45,7 +45,7 @@ function parsemat(f, filename::AbstractString)
     psyphydata = data["psyphydata"]
 
     # parse celldata
-    cts = Dict{Int,CellsTrial{Float64}}()   # not all trial indexes are guaranteed to be present
+    cts = OrderedDict{Int,CellsTrial{Float64}}()   # not all trial indexes are guaranteed to be present
     i0 = i = 1
     idx = Int(celldata[i,2])
     while i <= size(celldata, 1)
@@ -60,13 +60,13 @@ function parsemat(f, filename::AbstractString)
     end
 
     # parse goodtrials (here we assume all trials are listed)
-    tts = Dict{Int,TrialResult}()
+    tts = OrderedDict{Int,TrialResult}()
     for r in eachrow(goodtrials)
         tts[Int(r[1])] = mat_trialresult(r[2:end]...)
     end
 
     # parse psyphydata
-    ets = Dict{Int,EventTiming}()
+    ets = OrderedDict{Int,EventTiming}()
     j = 0
     while j < size(psyphydata,1)
         trial_start = offer_on = offer_off = go = choice = trial_end = Tms(NaN)

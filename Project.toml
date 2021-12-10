@@ -6,6 +6,7 @@ version = "0.1.0"
 [deps]
 IntervalSets = "8197267c-284f-5f27-9208-e0e47529a953"
 MAT = "23992714-dd62-5051-b70f-ba57cb901cac"
+OrderedCollections = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [compat]
