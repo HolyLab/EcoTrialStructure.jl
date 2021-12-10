@@ -39,7 +39,11 @@ using Documenter
         @test ct[FrameSeq(490ms, 1),:] == (500ms..500ms, dFoF[end:end,:])
     end
 
-    @testset "TrialResult" begin
+    @testset "TrialType & TrialResult" begin
+        tt = TrialType(3, 1, false)
+        @test sprint(show, tt) == "TrialType(nA=3, nB=1, leftA=false)"
+        @test eval(Meta.parse("TrialType(nA=3, nB=1, leftA=false)")) == tt
+
         tr = TrialResult(3, 1, false, true)
         @test sprint(show, tr) == "TrialResult(nA=3, nB=1, leftA=false, choseA=true)"
         @test eval(Meta.parse("TrialResult(nA=3, nB=1, leftA=false, choseA=true)")) == tr

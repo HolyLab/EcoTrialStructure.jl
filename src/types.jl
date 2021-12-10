@@ -110,7 +110,7 @@ struct TrialType
 end
 
 # This constructor makes it possible to copy/paste the output of the `show` method below
-TrialType(; nA, nB, leftA) = TrialResult(nA, nB, leftA)
+TrialType(; nA, nB, leftA) = TrialType(nA, nB, leftA)
 
 Base.show(io::IO, tt::TrialType) = print(io, "TrialType(nA=", tt.nA, ", nB=", tt.nB, ", leftA=", tt.leftA, ")")
 
