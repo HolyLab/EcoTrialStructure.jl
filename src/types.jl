@@ -118,12 +118,14 @@ function Base.getindex(ct::CellsTrial, ti::FrameSeq, ci)
 end
 
 Base.length(fs::FrameSeq) = length(fs.idx)
-Base.axes(fs::FrameSeq) = (fs.idx,)
-Base.axes(fs::FrameSeq, d) = axes(fs)[d]
+Base.axes(fs::FrameSeq) = axes(fs.idx)
+Base.axes(fs::FrameSeq, d) = axes(fs.idx, d)
 
 function Base.checkbounds(::Type{Bool}, ct::CellsTrial, ti::FrameSeq, ci)
-    irange = idxsof(ct.t, ti)
-    checkbounds(Bool, ct.dFoF, irange, ci)
+    r1, r2 = _idxof(ct.t, ti.start)
+    checkbounds(Bool, ct.t, r1) && checkbounds(Bool, ct.t, r2) || return false
+    irange = _idxof(ct.t, ti.start, r1, r2)
+    return checkbounds(Bool, ct.dFoF, irange, ci)
 end
 
 """
