@@ -33,8 +33,17 @@ using Documenter
         @test_throws BoundsError ct[2:3,3]
         @test_throws BoundsError ct[2:3,0]
         @test_throws BoundsError ct[4:6,:]
+        @test FrameSeq(100ms, 2) == FrameSeq(100ms, 0:1)
+        @test FrameSeq(:go, 2) == FrameSeq(:go, 0:1)
+        fs = FrameSeq(:go, 2)
+        @test length(fs) == 2
+        @test axes(fs) === (Base.OneTo(2),)
+        @test axes(fs, 1) === Base.OneTo(2)
         @test ct[FrameSeq(100ms, 2),:] == ct[FrameSeq(120ms, 2),:] == (100ms..200ms, dFoF[1:2,:])
+        @test ct[FrameSeq(200ms, -1:0),:] == (100ms..200ms, dFoF[1:2,:])
         @test ct[FrameSeq(200ms, 2),:] == ct[FrameSeq(220ms, 2),:] == ct[FrameSeq(180ms, 2),:] == (200ms..300ms, dFoF[2:3,:])
+        @test  checkbounds(Bool, ct, FrameSeq(100ms, 2), :)
+        @test !checkbounds(Bool, ct, FrameSeq( 80ms, 2), :)
         @test_throws BoundsError ct[FrameSeq( 80ms, 2),:]   # times must be within the span
         @test_throws BoundsError ct[FrameSeq(470ms, 2),:]
         @test ct[FrameSeq(490ms, 1),:] == (500ms..500ms, dFoF[end:end,:])

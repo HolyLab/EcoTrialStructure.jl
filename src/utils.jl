@@ -1,8 +1,17 @@
 function idxof(list, x)
+    r1, r2 = _idxof(list, x)
+    return _idxof(list, x, r1, r2)
+end
+function _idxof(list, x)
     r = searchsorted(list, x)
     r1, r2 = first(r), last(r)
-    r1, r2 = min(r1, r2), max(r1, r2)
-    return x - list[r1] < list[r2] - x ? r1 : r2
+    return min(r1, r2), max(r1, r2)
+end
+_idxof(list, x, r1, r2) =  x - list[r1] < list[r2] - x ? r1 : r2
+
+function idxsof(list, ti::FrameSeq)
+    istart = idxof(list, ti.start)
+    return istart .+ ti.idx
 end
 
 ncells(ct::CellsTrial) = size(ct.dFoF, 2)
