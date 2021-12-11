@@ -25,6 +25,7 @@ using Documenter
         d[ct2] = 2
         @test length(d) == 1 && d[ct] == 2
         # indexing
+        @test ncells(ct) == 2
         @test ct[2:3,:] == (t[2:3], dFoF[2:3,:])
         @test ct[2:3,1] == (t[2:3], dFoF[2:3,1])
         @test ct[2:3,2] == (t[2:3], dFoF[2:3,2])
