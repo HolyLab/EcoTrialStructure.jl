@@ -81,9 +81,11 @@ end
 
 """
     FrameSeq(tstart, nframes)
+    FrameSeq(tstart, offsetrange)
     FrameSeq(eventfield::Symbol, nframes)
 
 A sequence of `nframes` frames starting at the nearest timepoint to `tstart`.
+Optionally specify a range of frames offset from `tstart`.
 See [`CellsTrial`](@ref) for an example using this in indexing.
 
 Alternatively, this can be constructed specifying a particular fieldname of [`EventTiming`](@ref),
@@ -92,28 +94,37 @@ trial:
 
 ```jldoctest; setup=:(using EcoTrialStructure)
 julia> fs = FrameSeq(:go, 5)
-FrameSeq(:go, 5)
+FrameSeq(:go, 0:4)
 
 julia> et = EventTiming(0ms, 100ms, 400ms, 450ms, 837ms, 1.2s)
 EventTiming(trial_start=0.0f0 ms, offer_on=100.0f0 ms, offer_off=400.0f0 ms, go=450.0f0 ms, choice=837.0f0 ms, trial_end=1200.0f0 ms)
 
 julia> fs(et)
-FrameSeq(450.0f0 ms, 5)
+FrameSeq(450.0f0 ms, 0:4)
 ```
 """
 struct FrameSeq
     start::Union{Tms,Symbol}
-    len::Int
+    idx::UnitRange{Int}
 end
-FrameSeq(start::Unitful.Quantity, len::Integer) = FrameSeq(Tms(start), len)
+FrameSeq(start::Unitful.Quantity, len::Integer) = FrameSeq(Tms(start), 0:len-1)
+FrameSeq(start::Symbol, len::Integer) = FrameSeq(start, 0:len-1)
+FrameSeq(start::Unitful.Quantity, idx::AbstractUnitRange) = FrameSeq(Tms(start), idx)
 
 function Base.getindex(ct::CellsTrial, ti::FrameSeq, ci)
     isdeferred(ti) && throw(ArgumentError("indexing requires a concrete `FrameSeq`, use `fs(et::EventTiming)`"))
-    ibegin = idxof(ct.t, ti.start)
-    iend = ibegin + ti.len - 1
-    return ct.t[ibegin] .. ct.t[iend], ct.dFoF[ibegin:iend, ci]
+    irange = idxsof(ct.t, ti)
+    return ct.t[first(irange)] .. ct.t[last(irange)], ct.dFoF[irange, ci]
 end
 
+Base.length(fs::FrameSeq) = length(fs.idx)
+Base.axes(fs::FrameSeq) = (fs.idx,)
+Base.axes(fs::FrameSeq, d) = axes(fs)[d]
+
+function Base.checkbounds(::Type{Bool}, ct::CellsTrial, ti::FrameSeq, ci)
+    irange = idxsof(ct.t, ti)
+    checkbounds(Bool, ct.dFoF, irange, ci)
+end
 
 """
     TrialType(nA, nB, leftA::Bool)
@@ -203,5 +214,5 @@ Base.show(io::IO, et::EventTiming) = print(io, "EventTiming(trial_start=", et.tr
 
 function (fs::FrameSeq)(et::EventTiming)
     start = fs.start
-    return isa(start, Symbol) ? FrameSeq(getfield(et, fs.start), fs.len) : fs
+    return isa(start, Symbol) ? FrameSeq(getfield(et, fs.start), fs.idx) : fs
 end

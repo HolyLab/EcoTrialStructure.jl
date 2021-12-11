@@ -5,6 +5,11 @@ function idxof(list, x)
     return x - list[r1] < list[r2] - x ? r1 : r2
 end
 
+function idxsof(list, ti::FrameSeq)
+    istart = idxof(list, ti.start)
+    return istart .+ ti.idx
+end
+
 ncells(ct::CellsTrial) = size(ct.dFoF, 2)
 
 """
