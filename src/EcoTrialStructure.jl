@@ -20,6 +20,7 @@ module EcoTrialStructure
 using Unitful
 using Unitful: ms, s
 using IntervalSets
+using OffsetArrays
 using OrderedCollections
 using MAT
 

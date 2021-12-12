@@ -1,12 +1,25 @@
 using EcoTrialStructure
+using OffsetArrays
 using Test
 using Documenter
 
 @testset "EcoTrialStructure.jl" begin
+    offsetrange((indices, values)) = OffsetArrays.IdOffsetRange(;values, indices)
+
     @test isempty(detect_ambiguities(EcoTrialStructure))
     doctest(EcoTrialStructure)
 
     @testset "CellsTrial" begin
+        function checkconsistent(ct, fs, cidx; errors::Bool=false)
+            if errors
+                @test !checkbounds(Bool, ct, fs, cidx)
+                @test_throws BoundsError ct[fs,cidx]
+            else
+                @test  checkbounds(Bool, ct, fs, cidx)
+                @test ct[fs,cidx][2] isa AbstractVecOrMat
+            end
+        end
+
         t = (100:100:500) * ms   # times at which frames were collected
         dFoF = [ 0.1 0.8;
                 -0.1 0.7;
@@ -37,16 +50,19 @@ using Documenter
         @test FrameSeq(:go, 2) == FrameSeq(:go, 0:1)
         fs = FrameSeq(:go, 2)
         @test length(fs) == 2
-        @test axes(fs) === (Base.OneTo(2),)
-        @test axes(fs, 1) === Base.OneTo(2)
-        @test ct[FrameSeq(100ms, 2),:] == ct[FrameSeq(120ms, 2),:] == (100ms..200ms, dFoF[1:2,:])
-        @test ct[FrameSeq(200ms, -1:0),:] == (100ms..200ms, dFoF[1:2,:])
-        @test ct[FrameSeq(200ms, 2),:] == ct[FrameSeq(220ms, 2),:] == ct[FrameSeq(180ms, 2),:] == (200ms..300ms, dFoF[2:3,:])
-        @test  checkbounds(Bool, ct, FrameSeq(100ms, 2), :)
-        @test !checkbounds(Bool, ct, FrameSeq( 80ms, 2), :)
-        @test_throws BoundsError ct[FrameSeq( 80ms, 2),:]   # times must be within the span
-        @test_throws BoundsError ct[FrameSeq(470ms, 2),:]
-        @test ct[FrameSeq(490ms, 1),:] == (500ms..500ms, dFoF[end:end,:])
+        fs = FrameSeq(100ms, 2)
+        @test axes(ct[FrameSeq(100ms, 2),:][2], 1) == axes(fs)[1] == axes(fs, 1)
+        @test ct[FrameSeq(100ms, 2),:] == ct[FrameSeq(120ms, 2),:] == (100ms..200ms, dFoF[offsetrange(0:1 => 1:2),:])
+        @test ct[FrameSeq(200ms, -1:0),:] == (100ms..200ms, dFoF[offsetrange(-1:0 => 1:2),:])
+        @test ct[FrameSeq(200ms, 2),:] == ct[FrameSeq(220ms, 2),:] == ct[FrameSeq(180ms, 2),:] == (200ms..300ms, dFoF[offsetrange(0:1 => 2:3),:])
+        checkconsistent(ct, FrameSeq(100ms, 2), :)
+        checkconsistent(ct, FrameSeq( 80ms, 2), :; errors=true)
+        checkconsistent(ct, FrameSeq(100ms, -1:0), :; errors=true)
+        checkconsistent(ct, FrameSeq(100ms, 3:4), :)
+        checkconsistent(ct, FrameSeq(100ms, 4:5), :; errors=true)
+        checkconsistent(ct, FrameSeq(470ms, 2), :; errors=true)
+        checkconsistent(ct, FrameSeq(420ms, 2), :)
+        @test ct[FrameSeq(490ms, 1),:] == (500ms..500ms, OffsetArray(dFoF[end:end,:], 0:0, Base.OneTo(size(dFoF,2))))
         @test_throws ArgumentError("indexing requires a concrete `FrameSeq`, use `fs(et::EventTiming)`") ct[FrameSeq(:go, 4), :]
     end
 

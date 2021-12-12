@@ -59,7 +59,7 @@ FrameSeq(:offer_on, -2:7)
 julia> dFoFs = [cts[trialindex][fs(et), :][2] for (trialindex, et) in ets];
 
 julia> dFoFs[1]   # trial 3
-10×63 Matrix{Float64}:
+10×63 OffsetArray(::Matrix{Float64}, -2:7, 1:63) with eltype Float64 with indices -2:7×1:63:
  0.146783   0.479383  0.598108  …  0.0408331   0.0357164   0.0741511
  0.177113   0.481758  0.579934     0.0181103   0.029064    0.0962147
  0.158358   0.318992  0.679291     0.0356008  -0.0285638   0.242723
