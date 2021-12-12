@@ -8,9 +8,10 @@ You can learn more about each of the following from its own docstring, e.g., `?C
 - `FrameSeq`: A sequence of `nframes` frames starting nearest to a specified time.
 - `TrialType`: Encode the offer quantities and side (left/right).
 - `TrialResult`: Encode the `TrialType` and the animal's choice.
-- `isforced`: Returns `true` for a forced-choice trial.
-- `iswrong`: Returns `true` if the animal chose incorrectly on a forced-choice trial.
-- `madechoice`: Returns `true` if the animal made a choice in the trial.
+- `isforced`: Return `true` for a forced-choice trial.
+- `iswrong`: Return `true` if the animal chose incorrectly on a forced-choice trial.
+- `madechoice`: Return `true` if the animal made a choice in the trial.
+- `ncells`: Return the number of cells in a `CellsTrial`
 - `parsemat`: Parse the trial data in `filename`.
 - `positive_cells`: Extract the vector of `idx_positive_cells` from the .mat file.
 """

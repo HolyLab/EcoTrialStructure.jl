@@ -4,10 +4,10 @@ CurrentModule = EcoTrialStructure
 
 # EcoTrialStructure
 
-[EcoTrialStructure](https://github.com/HolyLab/EcoTrialStructure.jl) provides low-level operations to analyze experiments
-in economic decision making. You can import both behavioral and physiological data and manipulate them naturally.
+[EcoTrialStructure](https://github.com/HolyLab/EcoTrialStructure.jl) provides simple and natural operations to
+analyze experiments in economic decision making. You can import both behavioral and physiological data.
 
-## Matlab-file import (Padoa-Schioppa lab users)
+## [Matlab-file import (Padoa-Schioppa lab users)](@id mat)
 
 When the data have already been saved as a `.mat` file, the first thing to do is import the data.
 This package's `test/data` folder contains a test file that serves as a useful demo:
@@ -48,29 +48,35 @@ julia> trs[3].nB
 2
 ```
 
-There are also a number of convenience utilities, like [`isforced`](@ref) to detect whether a given trial presented a "forced" choice.
+There are also a number of convenience utilities, like [`isforced`](@ref) to detect whether a given trial presented a "forced" choice. See more examples in [Simple utilities](@ref).
 
-[`CellsTrial`](@ref) provides a number of convenience methods for extracting comparable data from different trials; see the examples in its documentation for a detailed explanation. But as an overall example, here is a demonstration extracting `dFoF` data in the 10 frames starting from `offer_on` across all trials, sorted by trial order:
+[`CellsTrial`](@ref) provides a number of convenience methods for extracting comparable data from different trials; see the examples in its documentation for a detailed explanation. But as an overall example, here is a demonstration based on the data above in [Matlab-file import](@ref mat). Here, we extract `dFoF` data triggered at `offer_on` across all (two) trials, extracting 2 pre-frames and 8 post-frames:
 
 ```jldoctest matdemo
-julia> dFoF = reduce(hcat, [cts[trialindex][FrameSeq(et.offer_on, 10), :][2] for (trialindex, et) in ets])
-10×126 Matrix{Float64}:
- 0.158358    0.318992    0.679291  …  0.109446   0.0925348  0.14776
- 0.0949043   0.427107    0.792304     0.117057   0.0633849  0.135291
- 0.207441    0.387189    0.50655      0.117598   0.0921308  0.0395489
- 0.173742    0.240543    0.49942      0.0703209  0.136526   0.211277
- 0.0754508   0.292467    0.44907      0.0493834  0.103206   0.114697
- 0.115572    0.281595    0.356081  …  0.0892007  0.154582   0.0220522
- 0.119914    0.193427    0.418782     0.1063     0.206242   0.0993945
- 0.0501042   0.12239     0.416016     0.114474   0.136142   0.0712373
- 0.0703462   0.219104    0.488288     0.10033    0.20305    0.0719393
- 0.0634827  -0.00769133  0.348985     0.0748435  0.0291505  0.106942
+julia> fs = FrameSeq(:offer_on, -2:7)  # 0 corresponds to offer_on
+FrameSeq(:offer_on, -2:7)
+
+julia> dFoFs = [cts[trialindex][fs(et), :][2] for (trialindex, et) in ets];
+
+julia> dFoFs[1]   # trial 3
+10×63 Matrix{Float64}:
+ 0.146783   0.479383  0.598108  …  0.0408331   0.0357164   0.0741511
+ 0.177113   0.481758  0.579934     0.0181103   0.029064    0.0962147
+ 0.158358   0.318992  0.679291     0.0356008  -0.0285638   0.242723
+ 0.0949043  0.427107  0.792304     0.105977   -0.0537317   0.26273
+ 0.207441   0.387189  0.50655      0.0597971  -0.0613983   0.135856
+ 0.173742   0.240543  0.49942   …  0.0809025  -0.0496011   0.129161
+ 0.0754508  0.292467  0.44907      0.156167    0.00943657  0.143208
+ 0.115572   0.281595  0.356081     0.0406873   0.0155088   0.122557
+ 0.119914   0.193427  0.418782     0.100677    0.288955    0.19112
+ 0.0501042  0.12239   0.416016     0.0648454   0.622751    0.0572375
 ```
 
-As explanation, in this demo there were only two trials, with 63 cells in each (hence the 126 columns).
-`FrameSeq(et.offer_on, 10)` indicates we want the 10 frames starting with the current trial's "offer-on" time (times are
-rounded to the closest frame time).  Because indexing a `CellsTrial` with a time or frame range returns both the time interval and the `dFoF` data, the final `[2]` selects just the `dFoF` data. Finally, the `reduce(hcat, Xs)` concatenates all matrices
-in `Xs` horizontally. If you find any of this confusing, try running individual pieces using the data in `test/data/testdata.mat` and seeing what each produces.
+and where `dFoFs[2]` returns the data for trial 201.
+
+As explanation, `fs(et)` "concretizes" the abstract notion of `offer_on` to the specific time for the trial corresponding
+to the events recorded in `et`. Frame sampling may not be precisely syncronized with behavioral events, so the
+frame nearest to the event time is chosen as the basepoint. Because indexing a `CellsTrial` with a time interval or `FrameSeq` returns both the time interval and the `dFoF` data, the final `[2]` selects just the `dFoF` data.
 
 ## API reference
 
@@ -97,4 +103,6 @@ EventTiming
 madechoice
 isforced
 iswrong
+isdeferred
+ncells
 ```

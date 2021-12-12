@@ -86,6 +86,15 @@ end
 
 A sequence of `nframes` frames starting at the nearest timepoint to `tstart`.
 Optionally specify a range of frames offset from `tstart`.
+
+```jldoctest; setup=:(using EcoTrialStructure)
+julia> fs = FrameSeq(100ms, 5)
+FrameSeq(100.0f0 ms, 0:4)
+
+julia> fs = FrameSeq(100ms, -2:4)
+FrameSeq(100.0f0 ms, -2:4)
+```
+
 See [`CellsTrial`](@ref) for an example using this in indexing.
 
 Alternatively, this can be constructed specifying a particular fieldname of [`EventTiming`](@ref),

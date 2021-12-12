@@ -14,6 +14,11 @@ function idxsof(list, ti::FrameSeq)
     return istart .+ ti.idx
 end
 
+"""
+    ncells(ct::CellsTrial)
+
+Return the number of cells stored in the `dFoF` field of `ct`.
+"""
 ncells(ct::CellsTrial) = size(ct.dFoF, 2)
 
 """
@@ -27,7 +32,7 @@ isdeferred(fs::FrameSeq) = isa(fs.start, Symbol)
 """
     madechoice(tr::TrialResult)
 
-Returns `true` if the animal made a choice in the trial.
+Return `true` if the animal made a choice in the trial.
 """
 madechoice(tr::TrialResult) = tr.choseA !== missing
 
@@ -35,7 +40,7 @@ madechoice(tr::TrialResult) = tr.choseA !== missing
     isforced(tt::TrialType)
     isforced(tr::TrialResult)
 
-Returns `true` for a forced-choice trial, where either `nA` or `nB` is zero.
+Return `true` for a forced-choice trial, where either `nA` or `nB` is zero.
 """
 isforced(tt::TrialType) = iszero(tt.nA) ⊻ iszero(tt.nB)
 isforced(tr::TrialResult) = isforced(tr.tt)
@@ -43,6 +48,6 @@ isforced(tr::TrialResult) = isforced(tr.tt)
 """
     iswrong(tr::TrialResult)
 
-Returns `true` if `tr` is a forced-choice trial and the animal chose the wrong option.
+Return `true` if `tr` is a forced-choice trial and the animal chose the wrong option.
 """
 iswrong(tr::TrialResult) = isforced(tr) && ((iszero(tr.nA) & (tr.choseA===true)) | (iszero(tr.nB) & (tr.choseA===false)))
