@@ -43,7 +43,7 @@ julia> tframes
 200.0f0 ms..400.0f0 ms
 
 julia> df
-3×2 Matrix{Float64}:
+3×2 OffsetArray(::Matrix{Float64}, 0:2, 1:2) with eltype Float64 with indices 0:2×1:2:
  -0.1  0.7
   0.2  0.6
   0.1  0.5
@@ -127,14 +127,14 @@ function Base.getindex(ct::CellsTrial, ti::FrameSeq, ci)
 end
 
 Base.length(fs::FrameSeq) = length(fs.idx)
-Base.axes(fs::FrameSeq) = axes(fs.idx)
-Base.axes(fs::FrameSeq, d) = axes(fs.idx, d)
+Base.axes(fs::FrameSeq) = (Base.IdentityUnitRange(fs.idx),)
+Base.axes(fs::FrameSeq, d) = axes(fs)[d]
 
 function Base.checkbounds(::Type{Bool}, ct::CellsTrial, ti::FrameSeq, ci)
     r1, r2 = _idxof(ct.t, ti.start)
     checkbounds(Bool, ct.t, r1) && checkbounds(Bool, ct.t, r2) || return false
-    irange = _idxof(ct.t, ti.start, r1, r2)
-    return checkbounds(Bool, ct.dFoF, irange, ci)
+    istart = _idxof(ct.t, ti.start, r1, r2)
+    return checkbounds(Bool, ct.dFoF, istart .+ ti.idx, ci)
 end
 
 """

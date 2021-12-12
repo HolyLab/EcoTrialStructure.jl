@@ -11,7 +11,7 @@ _idxof(list, x, r1, r2) =  x - list[r1] < list[r2] - x ? r1 : r2
 
 function idxsof(list, ti::FrameSeq)
     istart = idxof(list, ti.start)
-    return istart .+ ti.idx
+    return OffsetArrays.IdOffsetRange(values=istart .+ ti.idx, indices=ti.idx)
 end
 
 """
