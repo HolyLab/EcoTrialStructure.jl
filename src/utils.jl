@@ -37,12 +37,12 @@ Return `true` if the animal made a choice in the trial.
 madechoice(tr::TrialResult) = tr.choseA !== missing
 
 """
-    isforced(tt::TrialType)
+    isforced(tt::OfferType)
     isforced(tr::TrialResult)
 
 Return `true` for a forced-choice trial, where either `nA` or `nB` is zero.
 """
-isforced(tt::TrialType) = iszero(tt.nA) ⊻ iszero(tt.nB)
+isforced(tt::OfferType) = iszero(tt.nA) ⊻ iszero(tt.nB)
 isforced(tr::TrialResult) = isforced(tr.tt)
 
 """

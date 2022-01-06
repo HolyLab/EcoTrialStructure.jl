@@ -1,7 +1,7 @@
 name = "EcoTrialStructure"
 uuid = "b7cf6b7b-0a0b-40d6-9eb4-feefddb16adc"
 authors = ["Tim Holy <tim.holy@gmail.com> and contributors"]
-version = "0.1.0"
+version = "0.2.0"
 
 [deps]
 IntervalSets = "8197267c-284f-5f27-9208-e0e47529a953"

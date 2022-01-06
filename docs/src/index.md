@@ -92,7 +92,7 @@ positive_cells
 ```@docs
 CellsTrial
 FrameSeq
-TrialType
+OfferType
 TrialResult
 EventTiming
 ```
