@@ -155,6 +155,8 @@ end
 # This constructor makes it possible to copy/paste the output of the `show` method below
 TrialType(; nA, nB, leftA) = TrialType(nA, nB, leftA)
 
+TrialType(tt::TrialType) = tt
+
 Base.show(io::IO, tt::TrialType) = print(io, "TrialType(nA=", tt.nA, ", nB=", tt.nB, ", leftA=", tt.leftA, ")")
 
 function Base.isless(a::TrialType, b::TrialType)
@@ -184,6 +186,7 @@ struct TrialResult
 end
 TrialResult(nA, nB, leftA, choseA) = TrialResult(TrialType(nA, nB, leftA), choseA)
 TrialResult(; nA, nB, leftA, choseA) = TrialResult(nA, nB, leftA, choseA)
+TrialResult(tr::TrialResult) = tr
 
 function Base.getproperty(tr::TrialResult, name::Symbol)
     name === :nA && return getfield(tr, :tt).nA
@@ -196,6 +199,15 @@ end
 Base.show(io::IO, tr::TrialResult) = print(io, "TrialResult(nA=", tr.nA, ", nB=", tr.nB, ", leftA=", tr.leftA, ", choseA=", tr.choseA, ")")
 
 TrialType(tr::TrialResult) = tr.tt
+
+function Base.isless(a::TrialResult, b::TrialResult)
+    tta, ttb = TrialType(a), TrialType(b)
+    isless(tta, ttb) && return true
+    isless(ttb, tta) && return false
+    # This implements `true` > `missing` > `false` logic
+    rank(choice) = isa(choice, Bool) ? Float64(choice) : 0.5
+    return isless(rank(b.choseA), rank(a.choseA))
+end
 
 
 """
