@@ -66,15 +66,15 @@ using Documenter
         @test_throws ArgumentError("indexing requires a concrete `FrameSeq`, use `fs(et::EventTiming)`") ct[FrameSeq(:go, 4), :]
     end
 
-    @testset "TrialType & TrialResult" begin
-        tt = TrialType(3, 1, false)
-        @test TrialType(tt) === tt
-        @test sprint(show, tt) == "TrialType(nA=3, nB=1, leftA=false)"
-        @test eval(Meta.parse("TrialType(nA=3, nB=1, leftA=false)")) == tt
+    @testset "OfferType & TrialResult" begin
+        tt = OfferType(3, 1, false)
+        @test OfferType(tt) === tt
+        @test sprint(show, tt) == "OfferType(nA=3, nB=1, leftA=false)"
+        @test eval(Meta.parse("OfferType(nA=3, nB=1, leftA=false)")) == tt
 
         tr = TrialResult(3, 1, false, true)
         @test TrialResult(tr) === tr
-        @test TrialType(tr) == tt
+        @test OfferType(tr) == tt
         @test sprint(show, tr) == "TrialResult(nA=3, nB=1, leftA=false, choseA=true)"
         @test eval(Meta.parse("TrialResult(nA=3, nB=1, leftA=false, choseA=true)")) == tr
         @test tr == TrialResult(choseA=true, nB=1, nA=3, leftA=false)
@@ -93,34 +93,34 @@ using Documenter
         @test !isforced(TrialResult(0, 0, false, true))
 
         # Ordering: useful for printing results along a 1d axis
-        @test !(TrialType(5, 0, false) < TrialType(5, 0, false))
-        @test !(TrialType(5, 0, false) > TrialType(5, 0, false))
-        @test   TrialType(5, 0, false) < TrialType(4, 0, false)
-        @test !(TrialType(5, 0, false) > TrialType(4, 0, false))
-        @test   TrialType(5, 0, false) < TrialType(5, 2, false)
-        @test   TrialType(5, 1, false) > TrialType(5, 0, false)
+        @test !(OfferType(5, 0, false) < OfferType(5, 0, false))
+        @test !(OfferType(5, 0, false) > OfferType(5, 0, false))
+        @test   OfferType(5, 0, false) < OfferType(4, 0, false)
+        @test !(OfferType(5, 0, false) > OfferType(4, 0, false))
+        @test   OfferType(5, 0, false) < OfferType(5, 2, false)
+        @test   OfferType(5, 1, false) > OfferType(5, 0, false)
 
-        @test   TrialType(5, 1, false) < TrialType(5, 2, false)
-        @test !(TrialType(5, 1, false) > TrialType(5, 2, false))
-        @test !(TrialType(5, 1, false) < TrialType(5, 1, false))
-        @test !(TrialType(5, 1, false) > TrialType(5, 1, false))
+        @test   OfferType(5, 1, false) < OfferType(5, 2, false)
+        @test !(OfferType(5, 1, false) > OfferType(5, 2, false))
+        @test !(OfferType(5, 1, false) < OfferType(5, 1, false))
+        @test !(OfferType(5, 1, false) > OfferType(5, 1, false))
 
-        @test !(TrialType(0, 5, false) < TrialType(0, 5, false))
-        @test !(TrialType(0, 5, false) > TrialType(0, 5, false))
-        @test   TrialType(0, 5, false) > TrialType(0, 4, false)
-        @test !(TrialType(0, 5, false) < TrialType(0, 4, false))
-        @test   TrialType(0, 5, false) > TrialType(2, 5, false)
-        @test   TrialType(1, 5, false) < TrialType(0, 5, false)
+        @test !(OfferType(0, 5, false) < OfferType(0, 5, false))
+        @test !(OfferType(0, 5, false) > OfferType(0, 5, false))
+        @test   OfferType(0, 5, false) > OfferType(0, 4, false)
+        @test !(OfferType(0, 5, false) < OfferType(0, 4, false))
+        @test   OfferType(0, 5, false) > OfferType(2, 5, false)
+        @test   OfferType(1, 5, false) < OfferType(0, 5, false)
 
-        @test !(TrialType(1, 5, false) < TrialType(1, 5, true))
-        @test   TrialType(1, 5, true)  < TrialType(1, 5, false)
-        @test   TrialType(2, 5, false) < TrialType(1, 5, true)
-        @test   TrialType(2, 5, true)  < TrialType(1, 5, false)
+        @test !(OfferType(1, 5, false) < OfferType(1, 5, true))
+        @test   OfferType(1, 5, true)  < OfferType(1, 5, false)
+        @test   OfferType(2, 5, false) < OfferType(1, 5, true)
+        @test   OfferType(2, 5, true)  < OfferType(1, 5, false)
 
         for (a, b) in ((true, true), (true, false), (false, true), (false, false), (true, missing), (missing, true))
-            @test TrialResult(5, 1, false, a) < TrialResult(5, 2, false, b)    # TrialType trumps choice
+            @test TrialResult(5, 1, false, a) < TrialResult(5, 2, false, b)    # OfferType trumps choice
         end
-        tt = TrialType(5, 1, false)
+        tt = OfferType(5, 1, false)
         @test TrialResult(tt, true) < TrialResult(tt, missing) < TrialResult(tt, false)
         @test !(TrialResult(tt, true) < TrialResult(tt, true))
     end

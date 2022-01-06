@@ -138,29 +138,29 @@ function Base.checkbounds(::Type{Bool}, ct::CellsTrial, ti::FrameSeq, ci)
 end
 
 """
-    TrialType(nA, nB, leftA::Bool)
+    OfferType(nA, nB, leftA::Bool)
 
 Encode the offers (`nA` and `nB` are the number of drops of A and B, respectively),
 and whether A was on the left.
 
-If you have a list of `TrialType`s, you can `sort` them. High-A trials will come before high-B trials,
+If you have a list of `OfferType`s, you can `sort` them. High-A trials will come before high-B trials,
 and left before right.
 """
-struct TrialType
+struct OfferType
     nA::Int8
     nB::Int8
     leftA::Bool
 end
 
 # This constructor makes it possible to copy/paste the output of the `show` method below
-TrialType(; nA, nB, leftA) = TrialType(nA, nB, leftA)
+OfferType(; nA, nB, leftA) = OfferType(nA, nB, leftA)
 
-TrialType(tt::TrialType) = tt
+OfferType(tt::OfferType) = tt
 
-Base.show(io::IO, tt::TrialType) = print(io, "TrialType(nA=", tt.nA, ", nB=", tt.nB, ", leftA=", tt.leftA, ")")
+Base.show(io::IO, tt::OfferType) = print(io, "OfferType(nA=", tt.nA, ", nB=", tt.nB, ", leftA=", tt.leftA, ")")
 
-function Base.isless(a::TrialType, b::TrialType)
-    ratio(tt::TrialType) = tt.nB/tt.nA
+function Base.isless(a::OfferType, b::OfferType)
+    ratio(tt::OfferType) = tt.nB/tt.nA
 
     # Ordering puts high-A trials before high-B trials
     rA, rB = ratio(a), ratio(b)
@@ -175,16 +175,16 @@ end
 
 """
     TrialResult(nA, nB, leftA::Bool, choseA::Union{Bool,Missing})
-    TrialResult(tt::TrialType, choseA::Union{Bool,Missing})
+    TrialResult(tt::OfferType, choseA::Union{Bool,Missing})
 
-Encode the offer configuration (see [`TrialType`](@ref)), and whether the animal chose A, B, or failed to make a choice
+Encode the offer configuration (see [`OfferType`](@ref)), and whether the animal chose A, B, or failed to make a choice
 (`choseA = true | false | missing`, respectively).
 """
 struct TrialResult
-    tt::TrialType
+    tt::OfferType
     choseA::Union{Bool,Missing}   # missing if the animal didn't lick
 end
-TrialResult(nA, nB, leftA, choseA) = TrialResult(TrialType(nA, nB, leftA), choseA)
+TrialResult(nA, nB, leftA, choseA) = TrialResult(OfferType(nA, nB, leftA), choseA)
 TrialResult(; nA, nB, leftA, choseA) = TrialResult(nA, nB, leftA, choseA)
 TrialResult(tr::TrialResult) = tr
 
@@ -198,10 +198,10 @@ end
 
 Base.show(io::IO, tr::TrialResult) = print(io, "TrialResult(nA=", tr.nA, ", nB=", tr.nB, ", leftA=", tr.leftA, ", choseA=", tr.choseA, ")")
 
-TrialType(tr::TrialResult) = tr.tt
+OfferType(tr::TrialResult) = tr.tt
 
 function Base.isless(a::TrialResult, b::TrialResult)
-    tta, ttb = TrialType(a), TrialType(b)
+    tta, ttb = OfferType(a), OfferType(b)
     isless(tta, ttb) && return true
     isless(ttb, tta) && return false
     # This implements `true` > `missing` > `false` logic
