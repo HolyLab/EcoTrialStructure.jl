@@ -11,7 +11,7 @@ OrderedCollections = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [compat]
-IntervalSets = "0.5"
+IntervalSets = "0.5, 0.6"
 MAT = "0.10"
 OffsetArrays = "1"
 OrderedCollections = "1"
